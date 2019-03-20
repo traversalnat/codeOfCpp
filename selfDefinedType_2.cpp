@@ -61,7 +61,7 @@ Color& operator++ (Color& t) {
 			return t=Color::red;
 	}
 }
-// 后缀形式, 返回一个项目副本, int x 为一个虚参数, 为了与前缀区分
+// 后缀形式, 返回一个项目副本, int x 为一个虚参数, 扩展为t++x从而实现t++
 Color operator++ (Color& t, int x) {
 	switch(t) {
 		// 强类型枚举的变量有作用域(自己的命名空间)
