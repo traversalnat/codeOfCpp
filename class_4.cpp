@@ -72,7 +72,106 @@ namespace Complex {
 
 }
 
+// 容器类(包含若干元素的对象)
+namespace Container {
+	class Vector {
+		private:
+			double *elem;
+			int sz;
+		public:
+			Vector(int s) {
+				if (s < 0) {
+					throw std::length_error("Vector(s)");
+				}
+				elem = new double[s];
+				sz = s;
+				// 资源获取即初始化
+				for (int i = 0; i != s; i++) 
+					elem[i] = 0;
+			}
+
+			// 使用元素列表初始化容器	如Vector v({1.2, 3.4});
+			// initializer_list 是一个标准库类型
+			// 由编译器识别 列表参数并生产 initializer_list
+			Vector(std::initializer_list<double> lst) 
+				:elem{new double[lst.size()]}, 
+					sz{static_cast<int>(lst.size())}
+			{
+				const double* p = lst.begin();
+				for (int i = 0; i < lst.size(); i++) {
+					elem[i] = *(p + i);
+				}
+			}
+			// 容器的标准操作, 将一个元素加入到容器尾部
+			// 容器长度加1, 该实现版本效率很低
+			void push_back(double x) {
+				double *p = new double[sz+1];
+				for (int i = 0; i < sz; i++) {
+					p[i] = elem[i];
+				}
+				p[sz] = x;
+				delete[] elem;
+				elem = p;
+				sz += 1;
+			}
+
+
+			// 析构函数, 当类的对象离开作用域的时候, 自动调用析构函数
+			// 对局部资源进行释放(类), 确保构造函数分配的内存一定会被释放
+			~Vector() {delete[] elem;}
+
+			double& operator[] (int i) {
+				if (i < 0 || i > sz) {
+					throw std::out_of_range("Vector[]");
+				}
+				return elem[i];
+			}
+
+
+			int size() const {return sz;}
+
+		/*
+		 * 定义在类的外部的形式(同一命名空间内)
+			// begin and end 函数, 为了实现foreach 
+			const double* begin(Vector& x) {
+				return x.size() ? &x[0] : nullptr;
+			}
+
+			// 指向末尾元素的下一位置
+			const double* end(Vector& x) {
+				return begin(x) + x.size();
+			}
+		*/
+			const double* begin() {
+				return sz ? &elem[0] : nullptr;
+			}
+
+			const double* end() {
+				return begin() + sz;
+			}
+	};
+
+
+	int main() {
+		try {
+			Vector v(-1);
+		} catch (std::length_error) {
+			std::cout<<"Catch length_error\n";
+		}
+
+		Vector vc({1.2, 3.4, 4.5});
+		for (int i = 0; i < 5; i++) 
+			vc.push_back(i + 5.21);
+		for (auto x : vc) {
+			std::cout<<x<<" ";
+		}
+		std::cout<<std::endl;
+		return 0;
+	}
+};
+
 
 int main() {
 	Complex::main();
+	Container::main();
 }
