@@ -116,8 +116,65 @@ namespace template_2 {
 	}
 };
 
+// 3. 函数对象
+namespace template_3 {
+	template <typename T>
+		class Less_than {
+			const T val;
+			public:
+				Less_than(const T& v) : val{v} {}
+				// 重载 () 函数调用运算符
+				bool operator() (const T& v) const {return v < val;}
+		};
+
+	// 作为算法的参数出现
+	// pred 是一个重载 () 函数调用运算符的一个对象
+	// 可以称之为函数对象
+	template<typename C, typename P>
+		//对复杂类型慎用 const
+		int count(C& c, P pred) {
+			int cnt = 0;
+			for (auto& x : c) {
+				if (pred(x)) {
+					++cnt;
+				}
+			}
+			return cnt;
+		}
+
+	int main() {
+		Less_than<int> lti {142};
+		Less_than<std::string> lts {"Backus"};
+		bool b1 = lti(141);
+		bool b2 = lts("Back");
+		if (b1) {
+			std::cout<<"b1"<<std::endl;
+		}
+		if (b2) {
+			std::cout<<"b2"<<std::endl;
+		}
+		
+		// 使用函数对象
+		template_1::Vector<int> vec(3);
+		for (auto &x : vec) 
+			x = 141;
+		auto cnt = count(vec, lti);
+		std::cout<<cnt<<std::endl;
+
+		// 使用 lambda 表达式生成函数对象
+		// 使用方式 []() {}
+		// [] 中传递的是对 {} 所使用的局部变量的
+		// 访问方式, 如 [&] 希望使用引用访问, 
+		// [=] 希望使用值访问, 
+		// [&x] 希望对特定的变量x 使用引用访问
+		int cmp = 143;
+		std::cout<<count(vec, [&](int a){return a < cmp;});
+		return 0;
+	}
+};
 int main() {
 	template_1::main();
 	template_2::main();
+	template_3::main();
 	return 0;
 }
