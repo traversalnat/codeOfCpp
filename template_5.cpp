@@ -1,5 +1,6 @@
 #include<iostream>
 #include<stdexcept>
+#include<vector>
 
 // 模板, 用一组类型或值对其参数化的一个类或对象
 
@@ -168,13 +169,97 @@ namespace template_3 {
 		// [=] 希望使用值访问, 
 		// [&x] 希望对特定的变量x 使用引用访问
 		int cmp = 143;
-		std::cout<<count(vec, [&](int a){return a < cmp;});
+		std::cout<<count(vec, [&](int a){return a < cmp;})<<"\n";
 		return 0;
 	}
 };
+
+namespace template_4 {
+	template<typename T>
+		void g(T& x) {
+			std::cout<<x;
+		}
+	// 可变参数模板, 无参数函数 f, 用于当 f(tail...) 中tail无参数的时候
+	// f 使用可变参数, 在这里实现 printf 的效果
+	void f() {std::cout<<std::endl;}
+	template<typename T, typename... Tail>
+		void f(T head, Tail... tail) {
+			// 注意第一个参数和剩下的参数的区别
+			g(head);
+			// ... 表示列表中剩余的部分, 使用递归逐步取出tail中参数
+			f(tail...);
+		}
+
+	// 这是综合可变长参数和函数对象的一个实现
+	// sep 即可打印的元素之间执行的操作, 用户自定义
+	template<typename P>
+		void print(P sep) {}
+	template<typename P, typename T, typename... Tail>
+		void print(P sep, T head, Tail... tail) {
+			g(head);
+			sep();
+			print(sep, tail...);
+		}
+
+	// 使用字符串作为 sep
+	void printf(std::string sep) {}
+	template<typename T, typename... Tail>
+		void printf(std::string sep, T head, Tail... tail) {
+			g(head);
+			std::cout<<sep;
+			printf(sep, tail...);
+		}
+
+	int main() {
+		f(1, 2, 3, 4, "hello");
+		print([](){std::cout<<"\n";}, 1, 2, 3, 4 , 5);
+		printf("\n", 1, 2, 3, 4, "hello");
+		return 0;
+	}
+};
+
+// 别名的使用 类似 typedef
+// 如 using size_t = unsigned int; 类似于 typedef unsigned int size_t;
+// 每个标准容器都使用 value_type做为其类型的名字
+// Element_type 使用模板, 使用方式为 Element_type<typename>
+// typename C 为一个标准容器
+//
+
+
+template<typename C>
+using Element_type = typename C::value_type;
+
+template<typename Container>
+void algo(Container &c) {
+	std::vector<Element_type<Container>> vec;
+	for (auto &x : c) {
+		vec.push_back(x);
+	}
+
+	for (auto &x : vec) {
+		std::cout<<x;
+	}
+	std::cout<<"\n";
+}
+void testAlgo() {
+	std::vector<int> vec ({1, 2, 3, 4});
+	algo(vec);
+}
+
+// 通过别名绑定模板的部分实参, 定义新的模板
+template<typename Key, typename Value>
+	class Map {
+		public:
+			Map() {}
+	};
+template<typename Value>
+using String_map = Map<std::string, Value>;
+
 int main() {
 	template_1::main();
 	template_2::main();
 	template_3::main();
+	template_4::main();
+	testAlgo();
 	return 0;
 }
