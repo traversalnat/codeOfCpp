@@ -1,6 +1,9 @@
 #pragma once
+#include "Abstraction.h"
+#include "AbstractionImpl.h"
+class Abstraction;
 
-class AbstractionImp 
+class AbstractionImp : public Abstraction
 {
 	public:
 		virtual ~AbstractionImp();

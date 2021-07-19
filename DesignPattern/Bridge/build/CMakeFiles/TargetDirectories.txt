@@ -1,5 +1,0 @@
-/Users/jackzhang/workspace/codeOfCpp/DesignPattern/Bridge/build/CMakeFiles/rebuild_cache.dir
-/Users/jackzhang/workspace/codeOfCpp/DesignPattern/Bridge/build/CMakeFiles/edit_cache.dir
-/Users/jackzhang/workspace/codeOfCpp/DesignPattern/Bridge/build/CMakeFiles/test.dir
-/Users/jackzhang/workspace/codeOfCpp/DesignPattern/Bridge/build/CMakeFiles/run.dir
-/Users/jackzhang/workspace/codeOfCpp/DesignPattern/Bridge/build/CMakeFiles/unit_tests.dir
