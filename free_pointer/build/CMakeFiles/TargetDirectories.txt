@@ -1,0 +1,5 @@
+/Users/jackzhang/workspace/codeOfCpp/free_pointer/build/CMakeFiles/rebuild_cache.dir
+/Users/jackzhang/workspace/codeOfCpp/free_pointer/build/CMakeFiles/edit_cache.dir
+/Users/jackzhang/workspace/codeOfCpp/free_pointer/build/CMakeFiles/test.dir
+/Users/jackzhang/workspace/codeOfCpp/free_pointer/build/CMakeFiles/run.dir
+/Users/jackzhang/workspace/codeOfCpp/free_pointer/build/CMakeFiles/unit_tests.dir

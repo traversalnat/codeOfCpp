@@ -1,0 +1,34 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/jackzhang/workspace/codeOfCpp/concurrent/concurrent.cpp
+gmock/gmock-matchers.h
+-
+gtest/gtest-death-test.h
+-
+gtest/gtest-param-test.h
+-
+gtest/gtest.h
+-
+gtest/gtest_pred_impl.h
+-
+exception
+-
+iostream
+-
+string
+-
+vector
+-
+thread
+-
+functional
+-
+future
+-
+

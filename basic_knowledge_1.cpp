@@ -71,6 +71,7 @@ int main() {
 
 }
 
+// 传递数组依然需要指定数组的宽度
 void sort(int (&v)[8]) {
 	for (auto x : v) {
 		cout << x;

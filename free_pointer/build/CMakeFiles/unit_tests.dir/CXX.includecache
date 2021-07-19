@@ -1,0 +1,28 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/jackzhang/workspace/codeOfCpp/free_pointer/free_pointer.cpp
+gmock/gmock-matchers.h
+-
+gtest/gtest-death-test.h
+-
+gtest/gtest-param-test.h
+-
+gtest/gtest.h
+-
+gtest/gtest_pred_impl.h
+-
+iostream
+-
+memory
+-
+string
+-
+vector
+-
+

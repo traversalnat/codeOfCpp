@@ -1,0 +1,30 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/jackzhang/workspace/codeOfCpp/class/class.cpp
+gmock/gmock-matchers.h
+-
+gtest/gtest-death-test.h
+-
+gtest/gtest-param-test.h
+-
+gtest/gtest.h
+-
+gtest/gtest_pred_impl.h
+-
+iostream
+-
+string
+-
+vector
+-
+
+/Users/jackzhang/workspace/codeOfCpp/class/main.cpp
+gmock/gmock.h
+/Users/jackzhang/workspace/codeOfCpp/class/gmock/gmock.h
+

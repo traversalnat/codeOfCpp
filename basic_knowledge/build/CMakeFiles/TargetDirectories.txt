@@ -1,0 +1,4 @@
+/Users/jackzhang/workspace/codeOfCpp/basic_knowledge/build/CMakeFiles/rebuild_cache.dir
+/Users/jackzhang/workspace/codeOfCpp/basic_knowledge/build/CMakeFiles/edit_cache.dir
+/Users/jackzhang/workspace/codeOfCpp/basic_knowledge/build/CMakeFiles/run.dir
+/Users/jackzhang/workspace/codeOfCpp/basic_knowledge/build/CMakeFiles/unit_tests.dir
