@@ -6,11 +6,18 @@ link_directories($ENV{GMOCK_HOME}/mybuild $ENV{GMOCK_HOME}/gtest/mybuild)
 add_definitions(-std=c++0x)
 set(CMAKE_CXX_FLAGS "${CMAXE_CXX_FLAGS} -Wall")
 
+set (headers
+	Abstraction.h
+	AbstractionImpl.h)
 
 set(sources 
-   main.cpp 
-   Bridge.cpp)
-add_executable(unit_tests ${sources})
+	main.cpp 
+	Bridge.cpp
+	Abstraction.cpp
+	AbstractionImpl.cpp
+	Bridge.cpp
+	main.cpp)
+add_executable(unit_tests ${headers} ${sources})
 target_link_libraries(unit_tests pthread)
 target_link_libraries(unit_tests gmock)
 target_link_libraries(unit_tests gtest)
