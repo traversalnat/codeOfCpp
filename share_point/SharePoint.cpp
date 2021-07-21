@@ -17,7 +17,7 @@ class Data {
 		}
 
 		~Data() {
-			std::cout << name << " has been freed!";
+			std::cout << name << " has been freed!\n";
 		}
 
 		static Data newData(std::string name) {
@@ -42,6 +42,14 @@ class share {
 			return __ptr__;
 		}
 
+		// std::shared_ptr 未使用这种做法
+		// T t;
+		// 存在缺陷: share<T> a = &t;
+		share& operator = (T *ptr) {
+			// std::shared_ptr<T>;
+			__ptr__ = ptr;
+			return *this;
+		}
 	private:
 		T *__ptr__;
 };
@@ -51,9 +59,14 @@ using testing::Test;
 class Sharepoint : public Test {
 	public:
 		share<Data> a {new Data("a")};
+		// t will be freed before b
+		// you will get error: pointer being freed was not allocated
+		Data t {"b"};
+		share<Data> b = &t;
 };
 
 TEST_F(Sharepoint, SharePoint_test) {
 	ASSERT_TRUE(a->name == "a");
+	ASSERT_TRUE(b->name == "b");
 }
 
