@@ -20,15 +20,17 @@ class Data {
 			std::cout << name << " has been freed!\n";
 		}
 
-		static Data newData(std::string name) {
-			return Data(name);
-		}
+		static Data newData(std::string name);
 
 		std::string name;
 
 	private:
 		std::vector<int> data;
 };
+
+Data Data::newData(std::string name) {
+    return Data(name);
+}
 
 template<class T>
 class share {

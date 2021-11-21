@@ -1,3 +1,5 @@
 bin/*
 tags
 **/build/
+**/.idea/*
+**/cmake-build-debug/
