@@ -20,7 +20,7 @@ class Pointer_To_Memfunc : public Test {
 // 模板类SenderSlot无法直接保存, 需要使用基类
 class ISenderSlot {
   public:
-    virtual void call() = 0;
+    virtual void call() =  0;
     virtual string getKey() = 0;
 };
 
@@ -39,9 +39,6 @@ class SenderSlot : public ISenderSlot {
     SenderSlot(S *sender, SIGNAL signal, T *receiver, SLOT slot) 
       : sender {sender}, signal {signal}, receiver {receiver}, slot {slot} {}
 
-    /**
-     * @brief 调用receiver 的槽函数
-     */
     void call() {
       (receiver->*slot)();
     }
@@ -87,13 +84,18 @@ class CENTER {
       return center;
     }
 
-    template <typename SIGNAL>
+    /**
+     * @brief 触发 signal 绑定的 slot
+     *
+     * @tparam SIGNAL
+     */
+    template<typename SIGNAL>
     void call() {
       /// 从 senderSlots 获取 SIGNAL 对应的所有 SenderSlot, 并调用 call()
       string key {typeid(SIGNAL).name()};
-      for (auto ss : senderSlots) {
-        if (ss->getKey() == key) {
-          ss->call();
+      for (auto iss : senderSlots) {
+        if (iss->getKey() == key) {
+          iss->call();
         }
       }
     }
@@ -118,15 +120,16 @@ class Sender {
   public:
     Sender(const string &str): name {str} {}
     // 还没想好参数怎么处理
-    void signal() {}
+    void signal() {
+      typedef void (Sender::*signal_ptr)(string str);
+      CENTER::getCenter()->call<signal_ptr>();
+    }
 
     /**
      * @brief 模拟 emit signal 
      */
     void trigger() {
-      cout << name << " has sended!" << endl;
-      typedef void (Sender::*signal_ptr)();
-      CENTER::getCenter()->call<signal_ptr>();
+      signal();
     }
   private:
     string name;
@@ -136,7 +139,7 @@ class Receiver {
   public:
     Receiver(const string &str): name {str} {}
     void slot() {
-      cout << name << " has received" << endl;
+      cout << name << " has received: " << endl;
     }
   private:
     string name;
@@ -157,3 +160,13 @@ TEST_F(Pointer_To_Memfunc, pointer_to_memfunc_test) {
   s->trigger();
 }
 
+void my_print() {}
+template<typename Head, typename... Args>
+void my_print(Head head, Args... args) {
+  cout << head; 
+  my_print(args...);
+}
+
+TEST_F(Pointer_To_Memfunc, varible_parameters) {
+  my_print("123", 2, "\n");
+}
