@@ -22,19 +22,10 @@ struct bare_func<S (T::*)(Args...)> {
     typedef S(type)(Args...);
 };
 
+template <typename T>
+using bare_func_type = typename bare_func<T>::type;
+
 // PUBLIC_SIGNAL 为信号函数模板代码, 可以设置成宏
-// auto anyslot_vec = slot_map[typeid(&Sender::signal).name()];
-// for (auto anyslot : anyslot_vec) {
-//     try {
-//         auto slot = any_cast<
-//             function<bare_func<decltype(&Sender::signal)>::type>>(
-//             anyslot);
-//         slot(str);
-//     } catch (std::bad_cast e) {
-//         cout << "Bad slot: " << anyslot.type().name() << endl;
-//         return;
-//     }
-// }
 
 #define PUBLIC_SIGNAL(Object, Signal, ...)                                 \
     do {                                                                   \
@@ -43,7 +34,7 @@ struct bare_func<S (T::*)(Args...)> {
         for (auto anyslot : anyslot_vec) {                                 \
             try {                                                          \
                 auto slot = any_cast<                                      \
-                    function<bare_func<decltype(&Object::Signal)>::type>>( \
+                    function<bare_func_type<decltype(&Object::Signal)>>>( \
                     anyslot);                                              \
                 slot(__VA_ARGS__);                                         \
             } catch (std::bad_cast e) {                                    \
@@ -68,9 +59,9 @@ struct _binded_mem_fn {
     _binded_mem_fn(R *r, SLOT slot) : r{r}, slot{slot} {}
 
     template <typename... Args>
-    void operator()(Args... args) {
+    void operator()(Args&&... args) {
         auto f = std::mem_fn(slot);
-        f(r, args...);
+        f(r, std::forward<Args>(args)...);
     }
 };
 

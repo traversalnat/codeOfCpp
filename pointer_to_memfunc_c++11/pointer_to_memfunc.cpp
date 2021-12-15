@@ -87,7 +87,7 @@ class Sender : public SRObject {
 
 template <typename S, typename SIGNAL, typename T, typename SLOT>
 void connect(S *sender, SIGNAL signal, T *receiver, SLOT slot) {
-    function<typename bare_func<SLOT>::type> slot_func = binded_mem_fn(receiver, slot);
+    function<bare_func_type<SLOT>> slot_func = binded_mem_fn(receiver, slot);
     any slot_any = slot_func;
     sender->_bind_signal(typeid(SIGNAL).name(), slot_any);
 }
