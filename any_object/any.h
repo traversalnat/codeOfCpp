@@ -75,6 +75,10 @@ class any {
 
  private:
     /**
+     * @brief 擦除类型后的数据
+     */
+    TypeRemover* _content;
+    /**
      * @brief _h 函数保存 _content 的类型信息
      *
      * @param none
@@ -82,10 +86,6 @@ class any {
      * @return void * 形式存在的 _content 的 typeinfo
      */
     void* (*_h)();
-    /**
-     * @brief 擦除类型后的数据
-     */
-    TypeRemover* _content;
     /**
      * @brief _content 引用计数
      */

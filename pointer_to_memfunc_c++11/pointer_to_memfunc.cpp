@@ -17,39 +17,17 @@
 
 #include "../any_object/any.h"
 
-using hlp::any;
-using hlp::any_cast;
 using std::cout;
 using std::endl;
 using std::function;
 using std::string;
-using std::unordered_map;
 using std::vector;
 using testing::Test;
+using hlp::any;
+using hlp::SRObject;
+using hlp::connect;
 
 class Pointer_To_Memfunc : public Test {};
-
-/**
- * @brief 信号/槽函数类
- */
-class SRObject {
- public:
-    /**
-     * @brief 将 sig 信号/ slot 槽键值对插入 slot_map
-     *
-     * @param sig
-     * @param slot
-     */
-    void _bind_signal(const string &sig, any slot) {
-        slot_map[sig].push_back(slot);
-    }
-
- protected:
-    /**
-     * @brief signal/slot 键值对
-     */
-    unordered_map<string, vector<any>> slot_map;
-};
 
 class Receiver : public SRObject {
  public:
@@ -84,13 +62,6 @@ class Sender : public SRObject {
  private:
     string name;
 };
-
-template <typename S, typename SIGNAL, typename T, typename SLOT>
-void connect(S *sender, SIGNAL signal, T *receiver, SLOT slot) {
-    function<bare_func_type<SLOT>> slot_func = binded_mem_fn(receiver, slot);
-    any slot_any = slot_func;
-    sender->_bind_signal(typeid(SIGNAL).name(), slot_any);
-}
 
 TEST_F(Pointer_To_Memfunc, pointer_to_memfunc_test) {
     Receiver *r{new Receiver{"Receiver"}};
