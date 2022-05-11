@@ -47,9 +47,9 @@ T median(T a, T b, T c) {
 template <typename RandomAccessIterator, typename T>
 RandomAccessIterator unguarded_partition(RandomAccessIterator first,
                                          RandomAccessIterator last, T pivot) {
+    --last;
     while (true) {
         while (*first < pivot) ++first;
-        --last;
         while (*last > pivot) --last;
         if (!(first < last)) return first;
         std::iter_swap(first, last);
@@ -123,15 +123,9 @@ TEST_F(Introsort, median) {
 }
 
 TEST_F(Introsort, introsort_test) {
-    std::vector<int> data{6, 5, 4, 7, 2, 3, 1};
-    std::vector<int> ans{1, 2, 3, 4, 5, 6, 7};
+    std::vector<int> data{1, 3, 9, 3, 8, 11};
     intro_sort(data.begin(), data.end());
-    for (int i : data) {
-        std::cout << i << " ";
-    }
-    std::cout << std::endl;
-
-    ASSERT_EQ(data, ans);
+    ASSERT_TRUE(std::is_sorted(data.begin(), data.end()));
 }
 
 TEST_F(Introsort, large_random_introsort_test) {
