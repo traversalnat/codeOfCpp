@@ -31,16 +31,16 @@ void println(std::vector<T> iter) {
     std::cout << "\n";
 }
 
+bool other_than(int a) {
+    return a > 3;
+}
+
 TEST_F(Function, function_test) {
     using std::cout;
     using std::vector;
     vector<int> iter{1, 2, 3, 4};
-    int sum = sum_if<int>(0, iter, [](int a) { return true; });
-    int iter_sum = 0;
-    for (auto x : iter) {
-        iter_sum += x;
-    }
-    ASSERT_EQ(iter_sum, sum);
+    int sum = sum_if<int>(0, iter, std::cref(other_than));
+    ASSERT_EQ(4, sum);
 }
 
 TEST_F(Function, template_test) {
