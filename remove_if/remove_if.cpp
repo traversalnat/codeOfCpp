@@ -13,15 +13,16 @@ class Remove_If : public Test {};
 
 template <typename ForwardIterator, typename Predicate>
 ForwardIterator __remove_if(ForwardIterator first, ForwardIterator last,
-                          Predicate pre) {
-    // 将不满足 pre 条件的元素移至 iterator 头部, 最后 [first, last) 是满足 pre 条件的元素
+                            Predicate pre) {
+    // 将不满足 pre 条件的元素移至 iterator 头部, 最后 [first, last) 是满足 pre
+    // 条件的元素
     first = std::find_if(first, last, pre);
     if (first != last) {
         ForwardIterator __i = first;
-        while (__i++ != last) {
+        while (++__i != last) {
             if (!(pre(*__i))) {
                 *first = std::move(*__i);
-                first++;
+                ++first;
             }
         }
     }
