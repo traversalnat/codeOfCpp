@@ -5,121 +5,117 @@
 #include <gtest/gtest_pred_impl.h>
 
 #include <iostream>
+#include <memory>
 #include <string>
 #include <vector>
 
 using testing::Test;
-class Source_Management : public Test {
-};
+class Source_Management : public Test {};
 
+// 模拟 rust
 class Vector {
-	public:
-		explicit Vector(int sz);
-		Vector(const Vector &x);
-		Vector(Vector &&x);
-		Vector& operator=(const Vector &x);
-		Vector& operator=(Vector &&x);
-		double& operator[](int i);
+ public:
+    explicit Vector(int sz);
+    // 不允许浅拷贝
+    Vector(const Vector &x) = delete;
+    Vector &operator=(const Vector &x) = delete;
+    // 所有权移动
+    Vector(Vector &&x);
+    Vector &operator=(Vector &&x);
+    bool operator==(const Vector &x) const;
+    // 深拷贝
+    Vector clone();
 
-        int size() {
-			return sz;
-		}
+    double &operator[](int i);
 
-		~Vector();
+    int size() const { return sz; }
 
-	private:
-		int sz;
-		double *elem;
+    ~Vector();
+
+ private:
+    int sz;
+    double *elem;
 };
 
 Vector::Vector(int sz) {
-	if (sz < 0) {
-		throw std::length_error("Vector sz should > 0");
-	}
-	elem = new double[sz];
-	this->sz = sz;
-}
-
-Vector::Vector(const Vector &x) : sz{x.sz}, elem{new double[x.sz]} {
-    for (int i = 0; i < sz; i++) {
-        elem[i] = x.elem[i];
+    if (sz < 0) {
+        throw std::length_error("Vector sz should > 0");
     }
+    elem = new double[sz];
+    this->sz = sz;
 }
 
 Vector::Vector(Vector &&x) : sz{x.sz}, elem{x.elem} {
-	x.elem = nullptr;
-	x.sz = 0;
+    x.elem = nullptr;
+    x.sz = 0;
 }
 
-Vector::~Vector() {
-	delete[] elem;
+Vector::~Vector() { delete[] elem; }
+
+Vector &Vector::operator=(Vector &&x) {
+    elem = x.elem;
+    sz = x.sz;
+    x.elem = nullptr;
+    x.sz = 0;
+    return *this;
 }
 
-Vector& Vector::operator=(const Vector &x) {
-	double *p = new double[x.sz];
-	for (int i = 0; i < x.sz; i++) {
-		p[i] = x.elem[i];
-	}
+double &Vector::operator[](int i) { return elem[i]; }
 
-	delete[] elem;
-	elem = p;
-	sz = x.sz;
-	return *this;
+bool Vector::operator==(const Vector &x) const {
+    if (sz != x.sz) {
+        return false;
+    }
+    for (int i = 0; i < sz; i++) {
+        if (elem[i] != x.elem[i]) {
+            return false;
+        }
+    }
+    return true;
 }
 
-Vector& Vector::operator=(Vector &&x) {
-	elem = x.elem;
-	sz = x.sz;
-	x.elem = nullptr;
-	x.sz = 0;
-	return *this;
+Vector Vector::clone() {
+    Vector v{this->sz};
+    for (int i = 0; i < this->sz; i++) {
+        v[i] = elem[i];
+    }
+    return v;
 }
 
-double& Vector::operator[](int i) {
-	return elem[i];
+bool is_empty(Vector &v) {
+    return v.size() == 0;
 }
 
-bool operator==(Vector a, Vector b) {
-	if (a.size() != b.size()) {
-		return false;
-	}
-	for (int i = 0; i < a.size(); i++) {
-		if (a[i] != b[i]) {
-			return false;
-		}
-	}
-	return true;
-}
+template <typename T>
+using Arc = std::shared_ptr<T>;
 
+TEST_F(Source_Management, source_manage_like_rust) {
+    // 所有权移动，使用移动构造函数模拟，禁用拷贝构造、赋值函数
+    auto v1 = Vector{3};
+    auto v2 = std::move(v1);
+    // 所有权表示旧的资源句柄被复制到新的资源句柄并且被清空
+    ASSERT_EQ(0, v1.size());    
 
-TEST_F(Source_Management, copy_assignment) {
-	Vector v1(3);
-	v1[0] = 1;
-	v1[1] = 2;
-	v1[2] = 3;
-	Vector v2{v1};
-	Vector v3 = v1;
-	ASSERT_EQ(v1, v2);
-	ASSERT_EQ(v1, v3);
-}
+    // 使用资源句柄作为参数，必须使用引用（拷贝构造函数被禁用）
+    ASSERT_TRUE(!is_empty(v2));    
 
-TEST_F(Source_Management, move_construct) {
-	Vector v1(3);
-	v1[0] = 1;
-	v1[1] = 2;
-	v1[2] = 3;
-	Vector v2{std::move(v1)};
-	Vector v3(0);
-	ASSERT_EQ(v1, v3);
-}
+    // 使用引用来访问资源句柄的数据（读写资源的成员函数返回引用）
+    // 相当于 rust &mut, 但是引用的使用是隐式的
+    v2[1] = 3;
+    ASSERT_EQ(3, v2[1]);
 
+    // 使用智能指针使得资源句柄可以存在多个备份
+    Arc<Vector> v3 { new Vector{3} };
+    std::vector<Arc<Vector>> container1;
+    std::vector<Arc<Vector>> container2;
+    container1.push_back(v3);
+    container2.push_back(v3);
 
-TEST_F(Source_Management, move_assignment) {
-	Vector v1(3);
-	v1[0] = 1;
-	v1[1] = 2;
-	v1[2] = 3;
-	Vector v2 = std::move(v1);
-	Vector v3(0);
-	ASSERT_EQ(v1, v3);
+    for (auto x : container1) {
+        std::cout << x->size() << std::endl;
+    }
+
+    for (auto x : container2) {
+        std::cout << x->size() << std::endl;
+    }
 }
