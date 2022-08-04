@@ -7,6 +7,7 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 using testing::Test;
@@ -111,6 +112,7 @@ TEST_F(Source_Management, source_manage_like_rust) {
     container1.push_back(v3);
     container2.push_back(v3);
 
+    std::cout << "使用智能指针使得资源句柄可以存在多个备份" << std::endl;
     for (auto x : container1) {
         std::cout << x->size() << std::endl;
     }
@@ -118,4 +120,23 @@ TEST_F(Source_Management, source_manage_like_rust) {
     for (auto x : container2) {
         std::cout << x->size() << std::endl;
     }
+
+    Vector a1 {3};
+    Vector a2 {4};
+    Vector a3 {5};
+    std::vector<Vector> container3;
+
+    container3.push_back(std::move(a1));
+    container3.push_back(std::move(a2));
+    container3.push_back(std::move(a3));
+
+    std::cout << "使用引用访问容器中的资源句柄" << std::endl;
+    for (Vector& x : container3) {
+        x[0] = 12345;
+        std::cout << x.size() << std::endl;
+    }
+
+    std::cout << container3[0][0] << std::endl;
+    std::cout << container3[1][0] << std::endl;
+    std::cout << container3[2][0] << std::endl;
 }
