@@ -69,7 +69,7 @@ void b() {
 }
 
 void free_Child() {
-    std::cout << "outer free" << std::endl;
+    std::cout << "outer free Child" << std::endl;
 }
 
 
@@ -78,7 +78,7 @@ void a_this(Child2 *t) {
 }
 
 Child2* free_Child2(Child2 *t) {
-    std::cout << "outer free" << std::endl;
+    std::cout << "outer free Child2" << std::endl;
     return t;
 }
 
@@ -117,8 +117,8 @@ TEST_F(Vtable_Test, class_test_test) {
     p[1] = NULL;    // RTII 指针
     p[2] = (void *) a_this;
     p[3] = (void *) b;
-    p[4] = (void *) free_Child2;
-    p[5] = nullptr; // 虚函数表结束
+    p[4] = (void *) free_Child2;    // ~Child2()
+    p[5] = (void *) free_Child2;    // ~Parent()
 
     // 模拟 Child2 类布局
     struct child2_table *table = new struct child2_table;
@@ -138,7 +138,7 @@ TEST_F(Vtable_Test, class_test_test) {
     std::cout << typeid(*pc).name() << std::endl;
     std::cout << typeid(child).name() << std::endl;
 
-    // delete pc;
+    delete pc;
 }
 
 
@@ -167,4 +167,18 @@ TEST_F(Vtable_Test, class_private_area) {
     // std::cout << p.a << std::endl; // private a
     std::cout << p_area->a << std::endl;
     std::cout << p_area->b << std::endl;
+}
+
+class Child3 : public Child, public Child2 {
+    public:
+        Child3(int a) : Child(), Child2 {a} {
+
+        }
+};
+
+TEST_F(Vtable_Test, multi_inheritance) {
+    Child3 child {1};
+    // 菱形继承导致定义冲突, 需要指定该函数继承自哪个类（确定访问哪个虚函数表）
+    child.Child::a();
+    child.Child2::a();
 }
