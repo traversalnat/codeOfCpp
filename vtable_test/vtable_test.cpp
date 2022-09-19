@@ -37,7 +37,7 @@ public:
     }
 
     ~Child() {
-        std::cout << "free Child" << std::endl;
+        std::cout << "free in Child" << std::endl;
     }
 };
 
@@ -174,6 +174,10 @@ class Child3 : public Child, public Child2 {
         Child3(int a) : Child(), Child2 {a} {
 
         }
+
+        virtual ~Child3() {
+            std::cout << "free in Child3" << std::endl;
+        }
 };
 
 TEST_F(Vtable_Test, multi_inheritance) {
@@ -181,4 +185,31 @@ TEST_F(Vtable_Test, multi_inheritance) {
     // 菱形继承导致定义冲突, 需要指定该函数继承自哪个类（确定访问哪个虚函数表）
     child.Child::a();
     child.Child2::a();
+
+    using func_type = void (*)();
+
+    std::cout << " ======= Function in vtable ======= " << std::endl;
+
+    /*
+     * Child3 布局
+     * vptr of Child
+     * vptr of Child2
+     * content of Child2
+     *
+       {
+       <Child> = {Parent = {
+          _vptr.Parent = 0x4442e0 <vtable for Child3+16>}, <No data fields>}, 
+       <Child2> = {<Parent> = {
+          _vptr.Parent = 0x444310 <vtable for Child3+64>}, aa = 1}, 
+      <No data fields>}
+      */
+
+    void **vtbl = (void **)*(void **)&child;
+    ((func_type) vtbl[1])();
+
+    void **vtbl2 = (void **)*(void **)((size_t)&child + 8);
+    ((func_type) vtbl2[1])();
+    ((void(*)(Child3 *)) vtbl2[2])(&child); // ~Child3 链式调用 ~Child2 ~Child
+
+    std::cout << " ======= Function in vtable ======= " << std::endl;
 }
